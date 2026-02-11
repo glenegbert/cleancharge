@@ -1,0 +1,9 @@
+services:
+  datafetch:
+    build: ./datafetch
+    env_file: .env
+    volumes:
+      - ./datafetch/app:/app
+    stdin_open: true
+    tty: true
+    command: sleep infinity
