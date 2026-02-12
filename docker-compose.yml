@@ -1,4 +1,15 @@
 services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    environment:
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: default
+    ports:
+      - "8123:8123"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ./clickhouse/init:/docker-entrypoint-initdb.d
+
   datafetch:
     build: ./datafetch
     env_file: .env
@@ -7,3 +18,8 @@ services:
     stdin_open: true
     tty: true
     command: sleep infinity
+    depends_on:
+      - clickhouse
+
+volumes:
+  clickhouse_data:

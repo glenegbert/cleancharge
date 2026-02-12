@@ -10,5 +10,12 @@ case "$1" in
   up)    docker-compose up -d ;;
   down)  docker-compose down ;;
   build) docker-compose build ;;
+  fetch) docker-compose exec datafetch python forecast_job.py ;;
+  ch)
+    case "$2" in
+      sql) docker-compose exec clickhouse clickhouse-client --user default --password default ;;
+      *)   echo "Usage: cc ch sql" ;;
+    esac
+    ;;
   *)     docker-compose exec "$@" ;;
 esac
