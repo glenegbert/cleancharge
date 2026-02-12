@@ -1,8 +1,11 @@
+import logging
 from datetime import datetime
 
 import clickhouse_connect
 
-from watttime_client import WattTimeClient
+from clients.watttime import WattTimeClient
+
+logging.basicConfig(level=logging.INFO)
 
 
 def parse_forecast(data):

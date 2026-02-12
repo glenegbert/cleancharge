@@ -1,4 +1,7 @@
 services:
+  redis:
+    image: redis:7-alpine
+
   clickhouse:
     image: clickhouse/clickhouse-server:latest
     environment:
@@ -17,9 +20,9 @@ services:
       - ./datafetch/app:/app
     stdin_open: true
     tty: true
-    command: sleep infinity
     depends_on:
       - clickhouse
+      - redis
 
 volumes:
   clickhouse_data:

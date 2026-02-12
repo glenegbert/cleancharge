@@ -7,15 +7,30 @@ set -e
 cd "$(dirname "$(readlink -f "$0")")"
 
 case "$1" in
-  up)    docker-compose up -d ;;
-  down)  docker-compose down ;;
-  build) docker-compose build ;;
-  fetch) docker-compose exec datafetch python forecast_job.py ;;
-  ch)
+  system)
     case "$2" in
-      sql) docker-compose exec clickhouse clickhouse-client --user default --password default ;;
-      *)   echo "Usage: cc ch sql" ;;
+      up)    docker-compose up -d ;;
+      down)  docker-compose down ;;
+      build)   docker-compose build ;;
+      restart) docker-compose down && docker-compose build && docker-compose up -d ;;
+      *)     echo "Usage: cc system {up|down|build|restart}" ;;
     esac
     ;;
-  *)     docker-compose exec "$@" ;;
+  ch)
+    case "$2" in
+      sql)  docker-compose exec clickhouse clickhouse-client --user default --password default ;;
+      size) docker-compose exec clickhouse clickhouse-client --user default --password default --query "SELECT table, formatReadableSize(sum(bytes_on_disk)) AS size, sum(rows) AS rows FROM system.parts WHERE active GROUP BY table ORDER BY table" ;;
+      *)    echo "Usage: cc ch {sql|size}" ;;
+    esac
+    ;;
+  datafetch)
+    case "$2" in
+      python)  docker-compose exec datafetch python ;;
+      logs)    docker-compose logs -f datafetch ;;
+      fetch)   docker-compose exec datafetch python -m jobs.forecast ;;
+      enqueue) docker-compose exec datafetch python -c "from actors import run_forecast; run_forecast.send()" ;;
+      *)       echo "Usage: cc datafetch {python|logs|fetch|enqueue}" ;;
+    esac
+    ;;
+  *) echo "Usage: cc {system|ch|datafetch}" ;;
 esac

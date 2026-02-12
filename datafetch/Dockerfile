@@ -9,4 +9,4 @@ COPY app/ .
 
 ENV PYTHONSTARTUP=/app/startup.py
 
-CMD ["python"]
+CMD ["dramatiq", "actors"]

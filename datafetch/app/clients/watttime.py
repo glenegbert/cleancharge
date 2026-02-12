@@ -1,6 +1,9 @@
+import logging
 import os
 
 import requests
+
+log = logging.getLogger(__name__)
 
 BASE_URL = "https://api.watttime.org"
 
@@ -21,6 +24,7 @@ class WattTimeClient:
 
     def login(self):
         """Authenticate with WattTime and cache the bearer token."""
+        log.info("Logging in as %s", self.username)
         resp = self.session.get(
             f"{BASE_URL}/login", auth=(self.username, self.password)
         )
@@ -30,12 +34,14 @@ class WattTimeClient:
             raise ValueError(f"No token in response: {resp.json()}")
         self.token = token
         self.session.headers.update({"Authorization": f"Bearer {token}"})
+        log.info("Login successful")
 
     def get_forecast(self, region="CAISO_NORTH", signal_type="co2_moer", horizon_hours=72):
         """Fetch forecast data for a region and signal type."""
         if not self.token:
             self.login()
 
+        log.info("Fetching forecast: region=%s signal_type=%s horizon_hours=%s", region, signal_type, horizon_hours)
         resp = self.session.get(
             f"{BASE_URL}/v3/forecast",
             params={
@@ -45,4 +51,6 @@ class WattTimeClient:
             },
         )
         resp.raise_for_status()
-        return resp.json()
+        data = resp.json()
+        log.info("Received %d data points", len(data.get("data", [])))
+        return data

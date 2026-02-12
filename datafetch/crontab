@@ -1,0 +1,1 @@
+*/5 * * * * cd /app && /usr/local/bin/python -c "from actors import run_forecast; run_forecast.send()" >> /proc/1/fd/1 2>&1
