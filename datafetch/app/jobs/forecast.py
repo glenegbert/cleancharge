@@ -3,7 +3,7 @@ from datetime import datetime
 
 import clickhouse_connect
 
-from clients.watttime import WattTimeClient
+from clients.watttime.v3 import WattTimeClient
 
 logging.basicConfig(level=logging.INFO)
 
