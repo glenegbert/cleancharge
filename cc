@@ -19,8 +19,10 @@ case "$1" in
   ch)
     case "$2" in
       sql)  docker-compose exec clickhouse clickhouse-client --user default --password default ;;
+      logs) docker-compose logs -f clickhouse ;;
       size) docker-compose exec clickhouse clickhouse-client --user default --password default --query "SELECT table, formatReadableSize(sum(bytes_on_disk)) AS size, sum(rows) AS rows FROM system.parts WHERE active GROUP BY table ORDER BY table" ;;
-      *)    echo "Usage: cc ch {sql|size}" ;;
+      clear_logs) docker-compose down && docker volume rm cleancharge_clickhouse_data && docker-compose up -d ;;
+      *)    echo "Usage: cc ch {sql|logs|size|clear_logs}" ;;
     esac
     ;;
   datafetch)
