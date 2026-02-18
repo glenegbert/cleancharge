@@ -1,3 +1,4 @@
 requests
 clickhouse-connect
 dramatiq[redis]
+pytest

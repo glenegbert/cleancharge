@@ -13,5 +13,10 @@ dramatiq.set_broker(broker)
 
 @dramatiq.actor
 def run_forecast():
-    from jobs.forecast import main
-    main()
+    from lib.alerts import alert_from_exception
+    try:
+        from jobs.forecast import main
+        main()
+    except Exception as e:
+        alert_from_exception("run_forecast", e)
+        raise

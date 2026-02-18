@@ -4,9 +4,7 @@ services:
 
   clickhouse:
     image: clickhouse/clickhouse-server:latest
-    environment:
-      CLICKHOUSE_USER: default
-      CLICKHOUSE_PASSWORD: default
+    env_file: .env
     ports:
       - "8123:8123"
     volumes:
