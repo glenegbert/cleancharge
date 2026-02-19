@@ -15,7 +15,8 @@ case "$1" in
       down)  docker-compose down ;;
       build)   docker-compose build ;;
       restart) docker-compose down && docker-compose build && docker-compose up -d ;;
-      *)     echo "Usage: cc system {up|down|build|restart}" ;;
+      logs)    docker-compose logs -f ;;
+      *)     echo "Usage: cc system {up|down|build|restart|logs}" ;;
     esac
     ;;
   ch)
@@ -39,5 +40,12 @@ case "$1" in
       *)       echo "Usage: cc datafetch {python|logs|fetch|enqueue|test}" ;;
     esac
     ;;
-  *) echo "Usage: cc {system|ch|datafetch}" ;;
+  frontend)
+    case "$2" in
+      logs)  docker-compose logs -f frontend ;;
+      at) docker-compose exec frontend sh ;;
+      *)  echo "Usage: cc frontend {logs|at}" ;;
+    esac
+    ;;
+  *) echo "Usage: cc {system|ch|datafetch|frontend}" ;;
 esac
